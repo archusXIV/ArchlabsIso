@@ -1,4 +1,4 @@
-# Archlabs-Iso
+# ArchlabsIso
 
 ### ChangeLog
 - Removed virtualbox-guest-dkms package from the installer because it does not exist anymore.
