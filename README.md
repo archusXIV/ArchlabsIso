@@ -1,5 +1,9 @@
 # Archlabs-Iso
 
+### ChangeLog
+- Removed virtualbox-guest-dkms package from the installer because it does not exist anymore.
+- Fixed /etc/mkinitcpio.conf by changing archiso_kms to kms in the HOOKS array.
+
 Source for ArchLabs ISO builds
 
 
@@ -17,8 +21,8 @@ Next make a directory to build the ISO in. It can be anywhere you like, it's jus
     mkdir ~/build
 
 
-Now you need to move the contents of the `archlabs` folder into the new directory that you made.  
-**NOTE: It is very important that you do it as root**. Every file needs to be owned by root.  
+Now you need to move the contents of the `archlabs` folder into the new directory that you made.
+**NOTE: It is very important that you do it as root**. Every file needs to be owned by root.
 This can be done by opening a file manager as root, or from a terminal using `su` or `sudo`.
 
 If you cloned the repo and made a directory as shown above, then you can run
@@ -29,7 +33,7 @@ If you cloned the repo and made a directory as shown above, then you can run
 
 Before building you will need to clean your pacman cache.
 
-    pacman -Scc
+    sudo pacman -Scc
 
 
 Now just run the build script with `-u` to update the installer, see `./build -h` for more options.
@@ -51,10 +55,10 @@ When finished there will be a directory called `out`, the ISO will be in there.
 
 - `pacman.conf` is used while building and has entries for the `archlabs` and `archlabs-testing` repos.
 
-- `airootfs` is the live boot file system. This is where to add anything that you want included on the ISO.  
-Remember, **everything must be done as root**, if you add something, do it with `su`, `sudo`, or `doas`.  
-Once added update `profiledef.sh` if special permissions are needed *(executable, read-only, etc.)*  
-Also note that the files included in the iso will **not** be added to installed systems, this must be done  
+- `airootfs` is the live boot file system. This is where to add anything that you want included on the ISO.
+Remember, **everything must be done as root**, if you add something, do it with `su`, `sudo`, or `doas`.
+Once added update `profiledef.sh` if special permissions are needed *(executable, read-only, etc.)*
+Also note that the files included in the iso will **not** be added to installed systems, this must be done
 in the archlabs installer.
 
 When finished, run the `build` script in the main directory.
