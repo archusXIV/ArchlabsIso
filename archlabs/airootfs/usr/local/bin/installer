@@ -2100,7 +2100,7 @@ install_packages()
 	fi
 
 	if [[ $VIRT == 'oracle' ]]; then
-		chrun "pacman -S ${KERNEL}-headers virtualbox-guest-utils virtualbox-guest-dkms --needed --noconfirm"
+		chrun "pacman -S ${KERNEL}-headers virtualbox-guest-utils --needed --noconfirm"
 	fi
 
 	chrun "pacman -Syyu --noconfirm" 2> "$ERR" 2>&1
