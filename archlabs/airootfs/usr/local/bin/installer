@@ -2707,7 +2707,8 @@ lvm_lv_size()
 			if (( ERR_SIZE != 1 )); then
 				case ${VOLUME_SIZE:$lv:1} in
 					[mMgG])
-						local s=${VOLUME_SIZE:0:$lv} m=$((s * 1000))
+						local s
+						s=${VOLUME_SIZE:0:$lv} m=$((s * 1000))
 						case ${VOLUME_SIZE:$lv:1} in
 							[Gg])
 								if (( m >= VGROUP_MB )); then
