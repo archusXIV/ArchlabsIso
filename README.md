@@ -4,8 +4,8 @@
 - Removed virtualbox-guest-dkms package from the installer because it does not exist anymore.
 - Fixed /etc/mkinitcpio.conf by changing archiso_kms to kms in the HOOKS array.
 
-Source for ArchLabs ISO builds
-
+### Credits
+Thanks to Nate for his great job on ArchLabs and for publishing so we can fork and customize our own iso.
 
 ### Building the ISO
 
@@ -13,7 +13,7 @@ The package `archiso` must be installed and it needs to be built on an `Arch x86
 
 First clone the repo to your system.
 
-    git clone https://bitbucket.org/natemaia/archlabs-iso ~/Downloads/archlabs-iso
+    git clone https://github.com/archusXIV/ArchlabsIso.git
 
 
 Next make a directory to build the ISO in. It can be anywhere you like, it's just a place to work.
