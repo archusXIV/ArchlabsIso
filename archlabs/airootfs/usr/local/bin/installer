@@ -628,10 +628,7 @@ select_keymap()
     return 0
 }
 
-select_usercmd()
-{
-    dlg USERCMD input "Command" "$_usercmd" "$USERCMD" nolimit
-}
+select_usercmd() { dlg USERCMD input "Command" "$_usercmd" "$USERCMD" nolimit; }
 
 select_mirrors()
 {
@@ -736,31 +733,31 @@ select_mirrors()
             }
     }' <<< "$REF_COUNTRIES")"
 
-while :; do
-    # eval the ofn calls added to insert off/on for dialog checkbox
-    cavail=$(eval $avail)
-    c=""
-    dlg codes check "Mirror Countries" "\nSelect which countries to use mirrors from.\n\nUse [Space] to toggle the selected item.\n\nNot choosing any will result in an automatic selection." $cavail || return 1
-    for i in $codes; do
-        i="${i//_/ }"
-        c+="${COUNTRIES[$i]},"
+    while :; do
+        # eval the ofn calls added to insert off/on for dialog checkbox
+        cavail=$(eval $avail)
+        c=""
+        dlg codes check "Mirror Countries" "\nSelect which countries to use mirrors from.\n\nUse [Space] to toggle the selected item.\n\nNot choosing any will result in an automatic selection." $cavail || return 1
+        for i in $codes; do
+            i="${i//_/ }"
+            c+="${COUNTRIES[$i]},"
+        done
+        yesno "Mirror Countries" "\nConfirm the following countries: $c\n" && break
     done
-    yesno "Mirror Countries" "\nConfirm the following countries: $c\n" && break
-done
 
-MIRROR_COUNTRY="$c"
+    MIRROR_COUNTRY="$c"
 
-# build a URL for mirror sorting without reflector
-for i in $codes; do
-    if [[ $MIRROR_URL ]]; then
-        MIRROR_URL+="&country=$i"
-    else
-        MIRROR_URL="https://www.archlinux.org/mirrorlist/?country=$i"
-    fi
-done
-MIRROR_URL+='&use_mirror_status=on'
+    # build a URL for mirror sorting without reflector
+    for i in $codes; do
+        if [[ $MIRROR_URL ]]; then
+            MIRROR_URL+="&country=$i"
+        else
+            MIRROR_URL="https://www.archlinux.org/mirrorlist/?country=$i"
+        fi
+    done
+    MIRROR_URL+='&use_mirror_status=on'
 
-return 0
+    return 0
 }
 
 select_sessions()
@@ -807,7 +804,7 @@ select_sessions()
     { [[ $INSTALL_WMS ]] && echo "$INSTALL_WMS" > /tmp/wmlist; } || rm -f /tmp/wmlist
 
         return 0
-    }
+}
 
 select_packages()
 {
@@ -1027,10 +1024,10 @@ part_menu()
 part_show()
 {
     msg "Device Tree" "\n\n$(
-        lsblk -no NAME,MODEL,SIZE,TYPE,FSTYPE,MOUNTPOINT |
-            awk '/disk|part|lvm|crypt/ && !'"/${IGNORE_DEV:-NONEXX}/"'{sub(/part|disk|crypt|lvm/, ""); print}'
-        )\n\n"
-    }
+        lsblk -no NAME,MODEL,SIZE,TYPE,FSTYPE,MOUNTPOINT \
+        | awk '/disk|part|lvm|crypt/ && !'"/${IGNORE_DEV:-NONEXX}/"'{sub(/part|disk|crypt|lvm/, ""); print}'
+    )\n\n"
+}
 
 part_auto()
 {
@@ -1200,11 +1197,11 @@ part_pretty()
             if ($4 == "") {
                 $4 = "unformatted"
             }
-        if ($5 == "") {
-            $5 = "unlabeled"
-        }
-    print $2, $3 "__" $4 "__" $5
-}')
+            if ($5 == "") {
+                $5 = "unlabeled"
+            }
+            print $2, $3 "__" $4 "__" $5
+        }')
 }
 
 part_format()
@@ -1868,39 +1865,39 @@ install_user()
 EOF
     fi
 
-        # upgrade existing home with new skeleton configs, making backups when needed
-        (( i )) && cp -rfaT -b --suffix='.bak' "$MNT/etc/skel/" "$MNT/home/$NEWUSER"
+    # upgrade existing home with new skeleton configs, making backups when needed
+    (( i )) && cp -rfaT -b --suffix='.bak' "$MNT/etc/skel/" "$MNT/home/$NEWUSER"
 
 
-        # cleanup the new home folder
+    # cleanup the new home folder
 
-        # remove tint2 configs if bspwm and openbox aren't being installed
-        [[ $INSTALL_WMS =~ (bspwm|openbox) ]] || rm -rf "$MNT/home/$NEWUSER/.config/tint2"
+    # remove tint2 configs if bspwm and openbox aren't being installed
+    [[ $INSTALL_WMS =~ (bspwm|openbox) ]] || rm -rf "$MNT/home/$NEWUSER/.config/tint2"
 
-        # remove jgmenu configs if bspwm, fluxbox, or openbox aren't being installed
-        [[ $INSTALL_WMS =~ (fluxbox|bspwm|openbox) ]] || rm -rf "$MNT/home/$NEWUSER/.config/jgmenu"
+    # remove jgmenu configs if bspwm, fluxbox, or openbox aren't being installed
+    [[ $INSTALL_WMS =~ (fluxbox|bspwm|openbox) ]] || rm -rf "$MNT/home/$NEWUSER/.config/jgmenu"
 
-        # remove geany configs if it wasn't installed
-        [[ ${USER_PKGS[*]} != *geany* ]] && rm -rf "$MNT/home/$NEWUSER/.config/geany"
+    # remove geany configs if it wasn't installed
+    [[ ${USER_PKGS[*]} != *geany* ]] && rm -rf "$MNT/home/$NEWUSER/.config/geany"
 
-        # remove shell stuff for unused shells
-        [[ $NEWSHELL != 'bash' ]] && rm -rf "$MNT/home/$NEWUSER/.bash"*
-        [[ $NEWSHELL != 'zsh' ]] && rm -rf "$MNT/home/$NEWUSER/.z"*
+    # remove shell stuff for unused shells
+    [[ $NEWSHELL != 'bash' ]] && rm -rf "$MNT/home/$NEWUSER/.bash"*
+    [[ $NEWSHELL != 'zsh' ]] && rm -rf "$MNT/home/$NEWUSER/.z"*
 
-        cat >> "$MNT/etc/profile" <<- EOF
-        # add ~/.local/bin to the PATH
-        echo \$PATH | grep -q "/home/$NEWUSER/.local/bin:" || export PATH="/home/$NEWUSER/.local/bin:\$PATH"
+    cat >> "$MNT/etc/profile" <<- EOF
+    # add ~/.local/bin to the PATH
+    echo \$PATH | grep -q "/home/$NEWUSER/.local/bin:" || export PATH="/home/$NEWUSER/.local/bin:\$PATH"
 EOF
 
-        # failed to install some AL packages so put a list in a script for the user to install later
-        if [[ "${FAIL_PKG[*]}" ]]; then
-            cat > "$MNT/home/$NEWUSER/packages" <<- EOF
-                #!/bin/bash
-                sudo pacman -Syyu ${FAIL_PKG[*]} --needed --noconfirm || exit
-                rm -f /home/$NEWUSER/packages"
+    # failed to install some AL packages so put a list in a script for the user to install later
+    if [[ "${FAIL_PKG[*]}" ]]; then
+        cat > "$MNT/home/$NEWUSER/packages" <<- EOF
+            #!/bin/bash
+            sudo pacman -Syyu ${FAIL_PKG[*]} --needed --noconfirm || exit
+            rm -f /home/$NEWUSER/packages"
 EOF
-        fi
-    }
+    fi
+}
 
 install_login()
 {
@@ -2125,31 +2122,31 @@ install_check_bg()
         pacstrap /mnt base rsync
     } >> /tmp/bgout 2>&1
 
-cp -Rf /etc/pacman.d "$MNT/etc/"
-cp -f /etc/pacman.conf "$MNT/etc/"
-cp -f /etc/pacman.d/mirrorlist "$MNT/etc/pacman.d/"
-al_repo "$MNT/etc/pacman.conf"
-{
-    if pacman-key --list-keys | grep -q "expired.*Nathaniel Maia" || ! pacman-key --list-keys | grep -q "$key"; then
-        chrun "pacman-key --recv-keys '$key'"
-        chrun "pacman-key --finger '$key'"
-        chrun "pacman-key --lsign-key '$key'"
+    cp -Rf /etc/pacman.d "$MNT/etc/"
+    cp -f /etc/pacman.conf "$MNT/etc/"
+    cp -f /etc/pacman.d/mirrorlist "$MNT/etc/pacman.d/"
+    al_repo "$MNT/etc/pacman.conf"
+    {
+        if pacman-key --list-keys | grep -q "expired.*Nathaniel Maia" || ! pacman-key --list-keys | grep -q "$key"; then
+            chrun "pacman-key --recv-keys '$key'"
+            chrun "pacman-key --finger '$key'"
+            chrun "pacman-key --lsign-key '$key'"
+        fi
+        chrun "pacman -Syyu --noconfirm"
+        chrun "pacman -S archlinux-keyring archlabs-keyring --noconfirm"
+        chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
+
+    } >> /tmp/bgout 2>&1
+
+    if [[ $NET_TYPE == 'networkmanager' ]]; then
+        chrun 'systemctl enable NetworkManager.service' >> /tmp/bgout 2>&1
+    else
+        chrun 'systemctl enable iwd.service' >> /tmp/bgout 2>&1
     fi
-    chrun "pacman -Syyu --noconfirm"
-    chrun "pacman -S archlinux-keyring archlabs-keyring --noconfirm"
-    chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
-} >> /tmp/bgout 2>&1
-
-if [[ $NET_TYPE == 'networkmanager' ]]; then
-    chrun 'systemctl enable NetworkManager.service' >> /tmp/bgout 2>&1
-else
-    chrun 'systemctl enable iwd.service' >> /tmp/bgout 2>&1
-fi
-
-if [[ -e /tmp/wmlist ]]; then
-    chrun "pacman -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >> /tmp/bgout 2>&1
-fi
+    if [[ -e /tmp/wmlist ]]; then
+        chrun "pacman -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >> /tmp/bgout 2>&1
+    fi
 }
 
 install_tearfree()
@@ -2166,34 +2163,34 @@ install_tearfree()
                                 Option      "TearFree" "true"
                         EndSection
 EOF
-                        sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
-                        cat "$MNT/etc/X11/xorg.conf.d/20-intel.conf"
-                    elif lspci | grep ' VGA ' | grep -q 'AMD/ATI.*RX\|AMD/ATI.*R[579]'; then # newer RX, R5, R7, and R9 cards can use the amdgpu driver
-                        echo "Creating AMD Tear Free config /etc/X11/xorg.conf.d/20-amdgpu.conf"
-                        cat > "$MNT/etc/X11/xorg.conf.d/20-amdgpu.conf" <<- EOF
-                        Section "Device"
-                                Identifier  "AMD Graphics"
-                                Driver      "amdgpu"
-                                Option      "TearFree" "true"
-                        EndSection
+            sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
+            cat "$MNT/etc/X11/xorg.conf.d/20-intel.conf"
+        elif lspci | grep ' VGA ' | grep -q 'AMD/ATI.*RX\|AMD/ATI.*R[579]'; then # newer RX, R5, R7, and R9 cards can use the amdgpu driver
+            echo "Creating AMD Tear Free config /etc/X11/xorg.conf.d/20-amdgpu.conf"
+            cat > "$MNT/etc/X11/xorg.conf.d/20-amdgpu.conf" <<- EOF
+            Section "Device"
+                    Identifier  "AMD Graphics"
+                    Driver      "amdgpu"
+                    Option      "TearFree" "true"
+            EndSection
 EOF
-                        sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
-                        cat "$MNT/etc/X11/xorg.conf.d/20-amdgpu.conf"
-                    elif lspci | grep ' VGA ' | grep -q 'AMD/ATI.*HD [2-6][0-9]*'; then # older HD 2xxx-6xxx cards must use the radeon driver
-                        echo "Creating Radeon Tear Free config /etc/X11/xorg.conf.d/20-radeon.conf"
-                        cat > "$MNT/etc/X11/xorg.conf.d/20-radeon.conf" <<- EOF
-                        Section "Device"
-                                Identifier  "AMD Graphics"
-                                Driver      "radeon"
-                                Option      "TearFree" "on"
-                        EndSection
+            sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
+            cat "$MNT/etc/X11/xorg.conf.d/20-amdgpu.conf"
+        elif lspci | grep ' VGA ' | grep -q 'AMD/ATI.*HD [2-6][0-9]*'; then # older HD 2xxx-6xxx cards must use the radeon driver
+            echo "Creating Radeon Tear Free config /etc/X11/xorg.conf.d/20-radeon.conf"
+            cat > "$MNT/etc/X11/xorg.conf.d/20-radeon.conf" <<- EOF
+            Section "Device"
+                    Identifier  "AMD Graphics"
+                    Driver      "radeon"
+                    Option      "TearFree" "on"
+            EndSection
 EOF
-                        sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
-                        cat "$MNT/etc/X11/xorg.conf.d/20-radeon.conf"
-                    elif lspci | grep ' VGA ' | grep -q 'NVIDIA'; then
-                        echo "NVIDIA cards are currently unsupported for auto config"
-                    else
-                        echo "Unknown video card - aborting driver setup"
+            sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
+            cat "$MNT/etc/X11/xorg.conf.d/20-radeon.conf"
+        elif lspci | grep ' VGA ' | grep -q 'NVIDIA'; then
+            echo "NVIDIA cards are currently unsupported for auto config"
+        else
+            echo "Unknown video card - aborting driver setup"
         fi
     fi
 }
@@ -2321,16 +2318,16 @@ EOF
 config_console()
 {
         if [[ $AUTOLOGIN ]]; then
-                mkdir -p "$AUTOLOGIN_SERV"
-                cat > "$AUTOLOGIN_SERV/autologin.conf" <<- EOF
-                [Service]
-                ExecStart=
-                ExecStart=-/sbin/agetty -o '-p -f -- \\\u' --noclear --autologin $NEWUSER %I \$TERM
-                Type=simple
-                Environment=XDG_SESSION_TYPE=x11
+            mkdir -p "$AUTOLOGIN_SERV"
+            cat > "$AUTOLOGIN_SERV/autologin.conf" <<- EOF
+            [Service]
+            ExecStart=
+            ExecStart=-/sbin/agetty -o '-p -f -- \\\u' --noclear --autologin $NEWUSER %I \$TERM
+            Type=simple
+            Environment=XDG_SESSION_TYPE=x11
 EOF
-            else
-                rm -rf "$AUTOLOGIN_SERV"
+        else
+            rm -rf "$AUTOLOGIN_SERV"
         fi
 
         if [[ $INSTALL_WMS ]]; then
@@ -2345,9 +2342,9 @@ EOF
                 # automatically run startx when logging in on tty1
                 [ -z "\$DISPLAY" ] && [ \$XDG_VTNR -eq 1 ] && startx
 EOF
-            else
-                rm -rf "$MNT/home/$NEWUSER/.xinitrc" "$MNT/root/.xinitrc"
-                return 0
+        else
+            rm -rf "$MNT/home/$NEWUSER/.xinitrc" "$MNT/root/.xinitrc"
+            return 0
         fi
 
     }
@@ -2359,13 +2356,13 @@ config_lightdm()
     if [[ $LIGHTDM_GREETER == 'gtk-greeter' && $DIST == "ArchLabs" ]]; then
         mkdir -p "$MNT/etc/lightdm"
         cat > "$MNT/etc/lightdm/lightdm-gtk-greeter.conf" <<- EOF
-                [greeter]
-                default-user-image=/usr/share/icons/ArchLabs-Dark/64x64/places/distributor-logo-archlabs.png
-                background=/usr/share/backgrounds/archlabs/archlabs.jpg
-                theme-name=Adwaita-dark
-                icon-theme-name=Adwaita
-                font-name=DejaVu Sans Mono 11
-                position=30%,end 50%,end
+            [greeter]
+            default-user-image=/usr/share/icons/ArchLabs-Dark/64x64/places/distributor-logo-archlabs.png
+            background=/usr/share/backgrounds/archlabs/archlabs.jpg
+            theme-name=Adwaita-dark
+            icon-theme-name=Adwaita
+            font-name=DejaVu Sans Mono 11
+            position=30%,end 50%,end
 EOF
     fi
 }
@@ -2436,18 +2433,18 @@ prerun_efistub()
             [[ $BTRFS_MNT ]] && printf '%s ' "$BTRFS_MNT"
             [[ $UCODE ]] && printf 'initrd=\%s.img ' "$UCODE"
             )initrd=\initramfs-${KERNEL}.img'"
-        }
+}
 
-    setup_syslinux()
-    {
-        if [[ $SYS == 'BIOS' ]]; then
-            EDIT_FILES[bootloader]="/boot/syslinux/syslinux.cfg"
-        else
-            EDIT_FILES[bootloader]="/boot/EFI/syslinux/syslinux.cfg"
-            BCMDS[syslinux]="mount -t efivarfs efivarfs /sys/firmware/efi/efivars > /dev/null 2>&1
-            efibootmgr -v -c -d $BOOT_D -p $BOOT_NUM -l /EFI/syslinux/syslinux.efi -L $DIST"
-        fi
-    }
+setup_syslinux()
+{
+    if [[ $SYS == 'BIOS' ]]; then
+        EDIT_FILES[bootloader]="/boot/syslinux/syslinux.cfg"
+    else
+        EDIT_FILES[bootloader]="/boot/EFI/syslinux/syslinux.cfg"
+        BCMDS[syslinux]="mount -t efivarfs efivarfs /sys/firmware/efi/efivars > /dev/null 2>&1
+        efibootmgr -v -c -d $BOOT_D -p $BOOT_NUM -l /EFI/syslinux/syslinux.efi -L $DIST"
+    fi
+}
 
 prerun_syslinux()
 {
@@ -2502,13 +2499,13 @@ prerun_syslinux()
         INITRD $([[ $UCODE ]] && printf "%s" "$d/$UCODE.img,")$d/initramfs-$KERNEL-fallback.img
 EOF
         return 0
-    }
+}
 
 setup_systemd-boot()
 {
         EDIT_FILES[bootloader]="/boot/loader/entries/${DIST,,}.conf"
         BCMDS[systemd-boot]="mount -t efivarfs efivarfs /sys/firmware/efi/efivars > /dev/null 2>&1; systemd-machine-id-setup && bootctl --path=/boot install"
-    }
+}
 
 prerun_systemd-boot()
 {
@@ -2520,23 +2517,22 @@ prerun_systemd-boot()
         editor   no
 EOF
 
-        cat > "$MNT/boot/loader/entries/${DIST,,}.conf" <<- EOF
-        title   $DIST Linux
-        linux   /vmlinuz-${KERNEL}$([[ $UCODE ]] && printf "\ninitrd  %s" "/$UCODE.img")
-        initrd  /initramfs-$KERNEL.img
-        options root=$ROOT_ID ${LUKS_DEV}${RESUME}rw net.ifnames=0$([[ $BTRFS_MNT ]] && printf ' %s' "$BTRFS_MNT")
+    cat > "$MNT/boot/loader/entries/${DIST,,}.conf" <<- EOF
+    title   $DIST Linux
+    linux   /vmlinuz-${KERNEL}$([[ $UCODE ]] && printf "\ninitrd  %s" "/$UCODE.img")
+    initrd  /initramfs-$KERNEL.img
+    options root=$ROOT_ID ${LUKS_DEV}${RESUME}rw net.ifnames=0$([[ $BTRFS_MNT ]] && printf ' %s' "$BTRFS_MNT")
 EOF
 
-        cat > "$MNT/boot/loader/entries/${DIST,,}-fallback.conf" <<- EOF
-        title   $DIST Linux Fallback
-        linux   /vmlinuz-${KERNEL}$([[ $UCODE ]] && printf "\ninitrd  %s" "/$UCODE.img")
-        initrd  /initramfs-$KERNEL-fallback.img
-        options root=$ROOT_ID ${LUKS_DEV}${RESUME}rw net.ifnames=0$([[ $BTRFS_MNT ]] && printf ' %s' "$BTRFS_MNT")
+    cat > "$MNT/boot/loader/entries/${DIST,,}-fallback.conf" <<- EOF
+    title   $DIST Linux Fallback
+    linux   /vmlinuz-${KERNEL}$([[ $UCODE ]] && printf "\ninitrd  %s" "/$UCODE.img")
+    initrd  /initramfs-$KERNEL-fallback.img
+    options root=$ROOT_ID ${LUKS_DEV}${RESUME}rw net.ifnames=0$([[ $BTRFS_MNT ]] && printf ' %s' "$BTRFS_MNT")
 EOF
 
-        mkdir -pv "$MNT/etc/pacman.d/hooks"
-
-        cat > "$MNT/etc/pacman.d/hooks/systemd-boot.hook" <<- EOF
+    mkdir -pv "$MNT/etc/pacman.d/hooks"
+    cat > "$MNT/etc/pacman.d/hooks/systemd-boot.hook" <<- EOF
         [Trigger]
         Type = Package
         Operation = Upgrade
@@ -2548,7 +2544,7 @@ EOF
         Exec = /usr/bin/bootctl update
 EOF
         return 0
-    }
+}
 
 ###############################################################################
 # btrfs functions
@@ -3317,7 +3313,7 @@ zshrc()
         promptinit
         prompt adam1
 EOF
-    }
+}
 
 debug()
 {
@@ -3559,7 +3555,7 @@ dialog_cfg()
         bindkey formfield BTAB form_prev
         bindkey formbox   BTAB form_prev
 EOF
-    }
+}
 
 chk_connect()
 {
