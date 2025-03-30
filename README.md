@@ -1,6 +1,7 @@
 # ArchlabsIso
 
 ### ChangeLog
+- Fixed EOF indentation after removing mixed-indent blocks of code.
 - Removed virtualbox-guest-dkms package from the installer because it does not exist anymore.
 - Fixed /etc/mkinitcpio.conf by changing archiso_kms to kms in the HOOKS array.
 
