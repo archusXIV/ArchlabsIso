@@ -32,7 +32,6 @@ libnotify
 gsimplecal
 lm_sensors
 networkmanager
-nitrogen
 pacman-contrib
 pamixer
 pavucontrol
@@ -140,4 +139,5 @@ fi
 
 end=$(date +%s)
 echo "build took $(( (end - begin) / 60 ))m $(( (end - begin) % 60 ))s"
+chmod 777 out/*.iso
 

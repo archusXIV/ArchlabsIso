@@ -65,6 +65,7 @@ memtest86+-efi
 mkinitcpio
 mkinitcpio-archiso
 mkinitcpio-nfs-utils
+mmc-utils
 modemmanager
 mtools
 nano
@@ -85,13 +86,13 @@ partclone
 parted
 partimage
 pcsclite
+polybar
 ppp
 pptpclient
 pv
 qemu-guest-agent
 refind
 reflector
-rp-pppoe
 rsync
 rxvt-unicode-terminfo
 screen
@@ -116,13 +117,16 @@ usbmuxd
 usbutils
 vim
 virtualbox-guest-utils-nox
+virtualbox-guest-utils
 vpnc
 wireless-regdb
 wireless_tools
 wpa_supplicant
 wvdial
+xdg-utils
 xfsprogs
 xl2tpd
+zram-generator
 zsh
 
 # live session packages
@@ -140,7 +144,6 @@ libnotify
 gsimplecal
 lm_sensors
 networkmanager
-nitrogen
 pacman-contrib
 pamixer
 pavucontrol

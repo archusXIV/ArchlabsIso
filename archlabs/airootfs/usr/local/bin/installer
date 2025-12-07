@@ -93,7 +93,6 @@ typeset -a WM_PKGS=(
     "dunst"
     # "exo"
     "feh"
-    "nitrogen"
     "picom"
     "scrot"
     "volumeicon"
