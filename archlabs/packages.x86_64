@@ -86,7 +86,6 @@ partclone
 parted
 partimage
 pcsclite
-polybar
 ppp
 pptpclient
 pv
@@ -117,7 +116,6 @@ usbmuxd
 usbutils
 vim
 virtualbox-guest-utils-nox
-virtualbox-guest-utils
 vpnc
 wireless-regdb
 wireless_tools
