@@ -1493,9 +1493,10 @@ mount_swap()
         done <<< "$PARTS"
     fi
 
-    dlg SWAP menu "Swap Setup" "\nSelect whether to use a swapfile, swap partition, or none (zram)." \
+    dlg SWAP menu "Swap Setup" "\nSelect whether to use a swapfile, swap partition, or none." \
         "none" "No swap space" \
         "swapfile" "/swapfile (editable size)" \
+        "zram" "Zram compressed swap (RAM-based)" \
         $pts
 
     if [[ -z $SWAP || $SWAP == "none" ]]; then
@@ -1517,6 +1518,8 @@ mount_swap()
         done
         part_swap "$MNT/$SWAP"
         SWAP="/$SWAP"
+    elif [[ $SWAP == "zram" ]]; then
+        SWAP="zram"
     else
         part_swap "$SWAP"
         part_countdec "$SWAP"
@@ -1809,7 +1812,16 @@ EOF
         ff02::1     ip6-allnodes
         ff02::2     ip6-allrouters
 EOF
-    }
+
+    if [[ $SWAP == "zram" ]]; then
+        mkdir -p "$MNT/etc/systemd"
+        cat > "$MNT/etc/systemd/zram-generator.conf" <<-'EOF'
+[zram0]
+zram-size = min(ram / 2, ram)
+compression-algorithm = zstd
+EOF
+    fi
+}
 
 install_user()
 {
@@ -1989,6 +2001,8 @@ install_packages()
     typeset -a inpkg=() rmpkg=() goodinpkg=() alpkg=()
 
     inpkg=("${SES_PKGS[@]}" "${USER_PKGS[@]}" "$NEWSHELL")
+
+    [[ $SWAP == "zram" ]] && inpkg+=("zram-generator")
 
     if [[ $INSTALL_WMS ]]; then
         inpkg+=("${BASE_PKGS[@]}" "${WM_PKGS[@]}")
