@@ -139,5 +139,3 @@ fi
 
 end=$(date +%s)
 echo "build took $(( (end - begin) / 60 ))m $(( (end - begin) % 60 ))s"
-chown "$USER":"$USER" out/*.iso
-

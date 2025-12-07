@@ -819,7 +819,6 @@ select_packages()
         cairo-dock "Light eye-candy fully themable animated dock" "$(ofn cairo-dock "${USER_PKGS[*]}")" \
         calligra "A set of applications for productivity" "$(ofn calligra "${USER_PKGS[*]}")" \
         chromium "An open-source web browser based on the Blink rendering engine" "$(ofn chromium "${USER_PKGS[*]}")" \
-        clementine "A modern music player and library organizer" "$(ofn clementine "${USER_PKGS[*]}")" \
         cmus "A small, fast and powerful console music player" "$(ofn cmus "${USER_PKGS[*]}")" \
         deluge "A bittorrent client written in python" "$(ofn deluge "${USER_PKGS[*]}")" \
         elinks "An advanced and well-established feature-rich text mode web browser" "$(ofn elinks "${USER_PKGS[*]}")" \
@@ -829,7 +828,6 @@ select_packages()
         evolution "Manage your email, contacts and schedule" "$(ofn evolution "${USER_PKGS[*]}")" \
         file-roller "Create and modify archives" "$(ofn file-roller "${USER_PKGS[*]}")" \
         firefox "A popular open-source web browser from Mozilla" "$(ofn firefox "${USER_PKGS[*]}")" \
-        gcolor2 "A simple GTK+2 color selector" "$(ofn gcolor2 "${USER_PKGS[*]}")" \
         geany "A fast and lightweight IDE" "$(ofn geany "${USER_PKGS[*]}")" \
         geary "A lightweight email client for the GNOME desktop" "$(ofn geary "${USER_PKGS[*]}")" \
         gimp "GNU Image Manipulation Program" "$(ofn gimp "${USER_PKGS[*]}")" \
@@ -841,7 +839,6 @@ select_packages()
         gpick "Advanced color picker using GTK+ toolkit" "$(ofn gpick "${USER_PKGS[*]}")" \
         gpicview "Lightweight image viewer" "$(ofn gpicview "${USER_PKGS[*]}")" \
         guvcview "Capture video from camera devices" "$(ofn guvcview "${USER_PKGS[*]}")" \
-        hexchat "A popular and easy to use graphical IRC client" "$(ofn hexchat "${USER_PKGS[*]}")" \
         inkscape "Professional vector graphics editor" "$(ofn inkscape "${USER_PKGS[*]}")" \
         irssi "A modular text mode IRC client with Perl scripting" "$(ofn irssi "${USER_PKGS[*]}")" \
         kdenlive "A popular non-linear video editor for Linux" "$(ofn kdenlive "${USER_PKGS[*]}")" \
@@ -863,8 +860,6 @@ select_packages()
         noto-fonts-cjk "Google Noto CJK fonts (Chinese, Japanese, Korean)" "$(ofn noto-fonts-cjk "${USER_PKGS[*]}")" \
         ntfs-3g "NTFS file system driver and utilities" "$(ofn ntfs-3g "${USER_PKGS[*]}")" \
         obs-studio "Free opensource streaming/recording software" "$(ofn obs-studio "${USER_PKGS[*]}")" \
-        openshot "An open-source, non-linear video editor for Linux" "$(ofn openshot "${USER_PKGS[*]}")" \
-        opera "A Fast and secure, free of charge web browser from Opera Software" "$(ofn opera "${USER_PKGS[*]}")" \
         pcmanfm "A fast and lightweight file manager based in Lxde" "$(ofn pcmanfm "${USER_PKGS[*]}")" \
         pidgin "Multi-protocol instant messaging client" "$(ofn pidgin "${USER_PKGS[*]}")" \
         plank "An elegant, simple, and clean dock" "$(ofn plank "${USER_PKGS[*]}")" \
@@ -1498,7 +1493,7 @@ mount_swap()
         done <<< "$PARTS"
     fi
 
-    dlg SWAP menu "Swap Setup" "\nSelect whether to use a swapfile, swap partition, or none." \
+    dlg SWAP menu "Swap Setup" "\nSelect whether to use a swapfile, swap partition, or none (zram)." \
         "none" "No swap space" \
         "swapfile" "/swapfile (editable size)" \
         $pts

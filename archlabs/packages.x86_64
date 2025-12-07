@@ -124,7 +124,6 @@ wvdial
 xdg-utils
 xfsprogs
 xl2tpd
-zram-generator
 zsh
 
 # live session packages
