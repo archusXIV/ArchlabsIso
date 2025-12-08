@@ -1747,70 +1747,67 @@ install_base()
     # touchpad config
     mkdir -pv "$MNT/etc/X11/xorg.conf.d/"
     cat > "$MNT/etc/X11/xorg.conf.d/40-touchpad.conf" <<- EOF
-        Section "InputClass"
-            Identifier "touchpad"
-            Driver "libinput"
-            MatchIsTouchpad "on"
-            Option "Tapping" "on"
-            Option "TappingDrag" "on"
-            Option "AccelSpeed" "0.5"
-            Option "AccelProfile" "adaptive"
-            Option "ScrollMethod" "twofinger"
-            Option "MiddleEmulation" "on"
-            Option "DisableWhileTyping" "on"
-            Option "TappingButtonMap" "lrm"
-        EndSection
-
-        Section "InputClass"
-            Identifier      "touchpad-ignore-duplicates"
-            MatchIsTouchpad "on"
-            MatchOS         "Linux"
-            MatchDevicePath "/dev/input/mouse*"
-            Option          "Ignore" "on"
-        EndSection
-
-        Section "InputClass"
-            Identifier  "clickpad-buttons"
-            MatchDriver "libinput"
-            Option      "SoftButtonAreas" "50% 0 82% 0 0 0 0 0"
-            Option      "SecondarySoftButtonAreas" "58% 0 0 15% 42% 58% 0 15%"
-        EndSection
-
-        Section "InputClass"
-            Identifier   "Disable-clickpad-buttons-on-Apple-touchpads"
-            MatchProduct "Apple|bcm5974"
-            MatchDriver  "libinput"
-            Option       "SoftButtonAreas" "0 0 0 0 0 0 0 0"
-        EndSection
+Section "InputClass"
+    Identifier "touchpad"
+    Driver "libinput"
+    MatchIsTouchpad "on"
+    Option "Tapping" "on"
+    Option "TappingDrag" "on"
+    Option "AccelSpeed" "0.5"
+    Option "AccelProfile" "adaptive"
+    Option "ScrollMethod" "twofinger"
+    Option "MiddleEmulation" "on"
+    Option "DisableWhileTyping" "on"
+    Option "TappingButtonMap" "lrm"
+EndSection
+Section "InputClass"
+    Identifier      "touchpad-ignore-duplicates"
+    MatchIsTouchpad "on"
+    MatchOS         "Linux"
+    MatchDevicePath "/dev/input/mouse*"
+    Option          "Ignore" "on"
+EndSection
+Section "InputClass"
+    Identifier  "clickpad-buttons"
+    MatchDriver "libinput"
+    Option      "SoftButtonAreas" "50% 0 82% 0 0 0 0 0"
+    Option      "SecondarySoftButtonAreas" "58% 0 0 15% 42% 58% 0 15%"
+EndSection
+Section "InputClass"
+    Identifier   "Disable-clickpad-buttons-on-Apple-touchpads"
+    MatchProduct "Apple|bcm5974"
+    MatchDriver  "libinput"
+    Option       "SoftButtonAreas" "0 0 0 0 0 0 0 0"
+EndSection
 EOF
 
-        cat > "$MNT/etc/X11/xorg.conf.d/00-keyboard.conf" <<- EOF
-        # Use localectl(1) to instruct systemd-localed to update it.
-        Section "InputClass"
-            Identifier      "system-keyboard"
-            MatchIsKeyboard "on"
-            Option          "XkbLayout" "$KEYMAP"
-        EndSection
+    cat > "$MNT/etc/X11/xorg.conf.d/00-keyboard.conf" <<- EOF
+# Use localectl(1) to instruct systemd-localed to update it.
+Section "InputClass"
+    Identifier      "system-keyboard"
+    MatchIsKeyboard "on"
+    Option          "XkbLayout" "$KEYMAP"
+EndSection
 EOF
 
-        cat > "$MNT/etc/default/keyboard" <<- EOF
-        # KEYBOARD CONFIGURATION FILE
-        # Consult the keyboard(5) manual page.
-        XKBMODEL=""
-        XKBLAYOUT="$KEYMAP"
-        XKBVARIANT=""
-        XKBOPTIONS=""
-        BACKSPACE="guess"
+    cat > "$MNT/etc/default/keyboard" <<- EOF
+# KEYBOARD CONFIGURATION FILE
+# Consult the keyboard(5) manual page.
+XKBMODEL=""
+XKBLAYOUT="$KEYMAP"
+XKBVARIANT=""
+XKBOPTIONS=""
+BACKSPACE="guess"
 EOF
         printf "KEYMAP=%s\nFONT=%s\n" "$CMAP" "$FONT" > "$MNT/etc/vconsole.conf"
 
         echo "$NEWHOST" > "$MNT/etc/hostname"
-        cat > "$MNT/etc/hosts" <<- EOF
-        127.0.0.1   localhost
-        127.0.1.1   $NEWHOST.localdomain $NEWHOST
-        ::1         localhost ip6-localhost ip6-loopback
-        ff02::1     ip6-allnodes
-        ff02::2     ip6-allrouters
+    cat > "$MNT/etc/hosts" <<- EOF
+127.0.0.1   localhost
+127.0.1.1   $NEWHOST.localdomain $NEWHOST
+::1         localhost ip6-localhost ip6-loopback
+ff02::1     ip6-allnodes
+ff02::2     ip6-allrouters
 EOF
 
     if [[ $SWAP == "zram" ]]; then
@@ -1861,13 +1858,13 @@ install_user()
 
         mkdir -p "$MNT/usr/share/xsessions"
         cat > "$MNT/usr/share/xsessions/dwm.desktop" <<- EOF
-                [Desktop Entry]
-                Encoding=UTF-8
-                Name=Dwm
-                Comment=Dynamic Window Manager
-                Exec=dwm
-                TryExec=dwm
-                Type=Application
+[Desktop Entry]
+Encoding=UTF-8
+Name=Dwm
+Comment=Dynamic Window Manager
+Exec=dwm
+TryExec=dwm
+Type=Application
 EOF
     fi
 
@@ -1891,16 +1888,16 @@ EOF
     [[ $NEWSHELL != 'zsh' ]] && rm -rf "$MNT/home/$NEWUSER/.z"*
 
     cat >> "$MNT/etc/profile" <<- EOF
-    # add ~/.local/bin to the PATH
-    echo \$PATH | grep -q "/home/$NEWUSER/.local/bin:" || export PATH="/home/$NEWUSER/.local/bin:\$PATH"
+# add ~/.local/bin to the PATH
+echo \$PATH | grep -q "/home/$NEWUSER/.local/bin:" || export PATH="/home/$NEWUSER/.local/bin:\$PATH"
 EOF
 
     # failed to install some AL packages so put a list in a script for the user to install later
     if [[ "${FAIL_PKG[*]}" ]]; then
         cat > "$MNT/home/$NEWUSER/packages" <<- EOF
-            #!/bin/bash
-            sudo pacman -Syyu ${FAIL_PKG[*]} --needed --noconfirm || exit
-            rm -f /home/$NEWUSER/packages"
+#!/bin/bash
+sudo pacman -Syyu ${FAIL_PKG[*]} --needed --noconfirm || exit
+rm -f /home/$NEWUSER/packages
 EOF
     fi
 }
@@ -2165,33 +2162,33 @@ install_tearfree()
         if lspci | grep ' VGA ' | grep -q 'Intel' && ! lspci | grep ' VGA ' | grep -qi 'NVIDIA'; then
             echo "Creating Intel Tear Free config /etc/X11/xorg.conf.d/20-intel.conf"
             cat > "$MNT/etc/X11/xorg.conf.d/20-intel.conf" <<- EOF
-                        Section "Device"
-                                Identifier  "Intel Graphics"
-                                Driver      "intel"
-                                Option      "TearFree" "true"
-                        EndSection
+Section "Device"
+        Identifier  "Intel Graphics"
+        Driver      "intel"
+        Option      "TearFree" "true"
+EndSection
 EOF
             sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
             cat "$MNT/etc/X11/xorg.conf.d/20-intel.conf"
         elif lspci | grep ' VGA ' | grep -q 'AMD/ATI.*RX\|AMD/ATI.*R[579]'; then # newer RX, R5, R7, and R9 cards can use the amdgpu driver
             echo "Creating AMD Tear Free config /etc/X11/xorg.conf.d/20-amdgpu.conf"
             cat > "$MNT/etc/X11/xorg.conf.d/20-amdgpu.conf" <<- EOF
-            Section "Device"
-                    Identifier  "AMD Graphics"
-                    Driver      "amdgpu"
-                    Option      "TearFree" "true"
-            EndSection
+Section "Device"
+        Identifier  "AMD Graphics"
+        Driver      "amdgpu"
+        Option      "TearFree" "true"
+EndSection
 EOF
             sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
             cat "$MNT/etc/X11/xorg.conf.d/20-amdgpu.conf"
         elif lspci | grep ' VGA ' | grep -q 'AMD/ATI.*HD [2-6][0-9]*'; then # older HD 2xxx-6xxx cards must use the radeon driver
             echo "Creating Radeon Tear Free config /etc/X11/xorg.conf.d/20-radeon.conf"
             cat > "$MNT/etc/X11/xorg.conf.d/20-radeon.conf" <<- EOF
-            Section "Device"
-                    Identifier  "AMD Graphics"
-                    Driver      "radeon"
-                    Option      "TearFree" "on"
-            EndSection
+Section "Device"
+        Identifier  "AMD Graphics"
+        Driver      "radeon"
+        Option      "TearFree" "on"
+EndSection
 EOF
             sed -i 's/xrender/glx/g' "$MNT/etc/skel/.config/picom.conf"
             cat "$MNT/etc/X11/xorg.conf.d/20-radeon.conf"
@@ -2220,13 +2217,13 @@ install_suckless()
 
     mkdir -p "$MNT/usr/share/xsessions"
     cat > "$MNT/usr/share/xsessions/dwm.desktop" <<- EOF
-        [Desktop Entry]
-        Encoding=UTF-8
-        Name=Dwm
-        Comment=Dynamic Window Manager
-        Exec=dwm
-        TryExec=dwm
-        Type=Application
+[Desktop Entry]
+Encoding=UTF-8
+Name=Dwm
+Comment=Dynamic Window Manager
+Exec=dwm
+TryExec=dwm
+Type=Application
 EOF
     }
 
@@ -2318,8 +2315,8 @@ trap "kill $BG_PID 2> /dev/null; tput cnorm" EXIT
 config_ly()
 {
     cat >> "$MNT/home/$NEWUSER/$LOGINRC" <<- EOF
-        # add ~/.local/bin to the PATH
-        echo \$PATH | grep -q "\$HOME/.local/bin:" || export PATH="\$HOME/.local/bin:\$PATH"
+# add ~/.local/bin to the PATH
+echo \$PATH | grep -q "\$HOME/.local/bin:" || export PATH="\$HOME/.local/bin:\$PATH"
 EOF
     }
 
@@ -2328,11 +2325,11 @@ config_console()
         if [[ $AUTOLOGIN ]]; then
             mkdir -p "$AUTOLOGIN_SERV"
             cat > "$AUTOLOGIN_SERV/autologin.conf" <<- EOF
-            [Service]
-            ExecStart=
-            ExecStart=-/sbin/agetty -o '-p -f -- \\\u' --noclear --autologin $NEWUSER %I \$TERM
-            Type=simple
-            Environment=XDG_SESSION_TYPE=x11
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty -o '-p -f -- \\\u' --noclear --autologin $NEWUSER %I \$TERM
+Type=simple
+Environment=XDG_SESSION_TYPE=x11
 EOF
         else
             rm -rf "$AUTOLOGIN_SERV"
@@ -2344,11 +2341,11 @@ EOF
 
             # run the session after logging in regardless of autologin
             cat >> "$MNT/home/$NEWUSER/$LOGINRC" <<- EOF
-                # add ~/.local/bin to the PATH
-                echo \$PATH | grep -q "\$HOME/.local/bin:" || export PATH="\$HOME/.local/bin:\$PATH"
+# add ~/.local/bin to the PATH
+echo \$PATH | grep -q "\$HOME/.local/bin:" || export PATH="\$HOME/.local/bin:\$PATH"
 
-                # automatically run startx when logging in on tty1
-                [ -z "\$DISPLAY" ] && [ \$XDG_VTNR -eq 1 ] && startx
+# automatically run startx when logging in on tty1
+[ -z "\$DISPLAY" ] && [ \$XDG_VTNR -eq 1 ] && startx
 EOF
         else
             rm -rf "$MNT/home/$NEWUSER/.xinitrc" "$MNT/root/.xinitrc"
@@ -2364,13 +2361,13 @@ config_lightdm()
     if [[ $LIGHTDM_GREETER == 'gtk-greeter' && $DIST == "ArchLabs" ]]; then
         mkdir -p "$MNT/etc/lightdm"
         cat > "$MNT/etc/lightdm/lightdm-gtk-greeter.conf" <<- EOF
-            [greeter]
-            default-user-image=/usr/share/icons/ArchLabs-Dark/64x64/places/distributor-logo-archlabs.png
-            background=/usr/share/backgrounds/archlabs/archlabs.jpg
-            theme-name=Adwaita-dark
-            icon-theme-name=Adwaita
-            font-name=DejaVu Sans Mono 11
-            position=30%,end 50%,end
+[greeter]
+default-user-image=/usr/share/icons/ArchLabs-Dark/64x64/places/distributor-logo-archlabs.png
+background=/usr/share/backgrounds/archlabs/archlabs.jpg
+theme-name=Adwaita-dark
+icon-theme-name=Adwaita
+font-name=DejaVu Sans Mono 11
+position=30%,end 50%,end
 EOF
     fi
 }
@@ -3126,7 +3123,7 @@ zshrc()
 {
     cat > "$MNT/etc/skel/.zshrc" <<- EOF
         if [[ \$- != *i* ]]; then
-                    return
+            return
         fi
 
         # completion cache path setup
