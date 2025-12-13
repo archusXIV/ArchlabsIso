@@ -1,7 +1,7 @@
 # ArchlabsIso
 
 ### ChangeLog
-- Added a pacman hook file to reinstall grub after install/update.
+- Added a pacman hook file to run grub-install after install/update, to avoid issue when rebooting.
 - Added zram as an option in the swap menu (default parameters: ram / 2).
 - Fixed weird EOF indentation after removing mixed-indent blocks of code.
 - Removed virtualbox-guest-dkms package, now using virtualbox-guest-utils.
