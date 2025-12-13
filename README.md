@@ -1,10 +1,19 @@
 # ArchlabsIso
 
 ### ChangeLog
+- Added a pacman hook file to reinstall grub after install/update.
 - Added zram as an option in the swap menu (default parameters: ram / 2).
 - Fixed weird EOF indentation after removing mixed-indent blocks of code.
-- Removed virtualbox-guest-dkms package from the installer because it does not exist anymore.
+- Removed virtualbox-guest-dkms package, now using virtualbox-guest-utils.
 - Fixed /etc/mkinitcpio.conf by changing archiso_kms to kms in the HOOKS array.
+
+### Notice
+Some packages have been moved in the AUR and are no longer available in the official repositories, so we have to build them from source, install yay and then:
+
+```bash
+yay -S nitrogen gtk-engine-murrine
+```
+After that run $HOME/packages script to install other ArchLabs tools & configs, exit your session and log back in.
 
 ### Credits
 Thanks to Nate for his great job on ArchLabs and for publishing so we can fork and customize our own iso.

@@ -2378,6 +2378,39 @@ EOF
 # prerun_* set up the configs needed before actually running the commands
 # setup_* are run after selecting a bootloader and build the command used later
 # they can also be used for further user input as these run before control is taken away
+create_grub_efi_hook()
+{
+    mkdir -pv "$MNT/etc/pacman.d/hooks"
+    cat > "$MNT/etc/pacman.d/hooks/update-grub.hook" <<- EOF
+[Trigger]
+Type=Package
+Operation=Upgrade
+Operation=Install
+Target=grub
+
+[Action]
+Description=Updating grub bootloader
+When=PostTransaction
+Exec=/usr/bin/grub-install --recheck --force --target=x86_64-efi --efi-directory=/boot --bootloader-id=archlabs
+EOF
+}
+
+create_grub_bios_hook()
+{
+    mkdir -pv "$MNT/etc/pacman.d/hooks"
+    cat > "$MNT/etc/pacman.d/hooks/update-grub.hook" <<- EOF
+[Trigger]
+Type=Package
+Operation=Upgrade
+Operation=Install
+Target=grub
+
+[Action]
+Description=Updating grub bootloader
+When=PostTransaction
+Exec=/usr/bin/grub-install --recheck --force --target=i386-pc
+EOF
+}
 
 setup_grub()
 {
@@ -2386,10 +2419,12 @@ setup_grub()
     if [[ $SYS == 'BIOS' ]]; then
         [[ $BOOT_D ]] || { part_device 1 || return 1; }
         BCMDS[grub]="grub-install --verbose --recheck --force --target=i386-pc $BOOT_D"
+        create_grub_bios_hook
     else
         BCMDS[grub]="mount -t efivarfs efivarfs /sys/firmware/efi/efivars > /dev/null 2>&1
         grub-install --verbose --recheck --force --target=x86_64-efi --efi-directory=/boot --bootloader-id='${DIST,,}'"
         grep -q /sys/firmware/efi/efivars /proc/mounts || mount -t efivarfs efivarfs /sys/firmware/efi/efivars > /dev/null 2>&1
+        create_grub_efi_hook
     fi
 
     BCMDS[grub]="mkdir -p /run/udev /run/lvm && mount --bind /hostrun/udev /run/udev && mount --bind /hostrun/lvm /run/lvm &&
