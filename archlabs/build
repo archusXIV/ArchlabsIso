@@ -137,5 +137,13 @@ if [[ $lts == 'true' ]]; then
     sed -i 's/archlabs-lts/archlabs/g' profiledef.sh
 fi
 
+read -rs -p "Enter the username for ownership of the built iso: " username
+usergroup=$(
+    awk -F':' -v user="$username" '
+        $0 ~ user { print $3":"$4 }
+    ' < /etc/passwd
+)
+
+chown -R "$usergroup" out
 end=$(date +%s)
 echo "build took $(( (end - begin) / 60 ))m $(( (end - begin) % 60 ))s"
