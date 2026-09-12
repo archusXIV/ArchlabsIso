@@ -1,6 +1,7 @@
 # ArchlabsIso
 
 ### ChangeLog
+- Added ownership prompt for the built ISO to ensure correct file permissions.
 - Added a pacman hook file to run grub-install after install/update, to avoid issue when rebooting.
 - Added zram as an option in the swap menu (default parameters: ram / 2).
 - Fixed weird EOF indentation after removing mixed-indent blocks of code.
